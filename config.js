@@ -12,9 +12,9 @@ const configs = {
             dialect: 'postgres',
             host: 'localhost',
             port: 5432,
-            username: 'postgres',
-            password: 'root',
-            database: 'chat-db',
+            username: 'keimancer',
+            password: 'Aen3ri@Syl',
+            database: 'chat-db-sheyko',
             define: {
                 timestamps: true, //? Nos obliga a que todas las tablas tengan la propiedad createdAt y upadtedAt
                 underscored: true,

@@ -1,5 +1,6 @@
 const usersControllers = require('./users.controllers')
 const responses = require('../utils/responses.handler')
+const { hashPassword } = require('../utils/crypto');
 
 const getAllUsers = (req, res) => {
     usersControllers.findAllUser()
@@ -20,6 +21,28 @@ const getAllUsers = (req, res) => {
                 })
         })
 }
+
+//* GET my user
+const getMyUser = ( req, res ) => {
+    const id = req.user.id;
+    usersControllers.findUserById( id )
+        .then( data => {
+            responses.success({
+                res,
+                status: 200,
+                data,
+                message: 'Current user information.'
+            }); 
+        })
+        .catch( error => {
+            responses.error({
+                res,
+                status: 400,
+                data: error,
+                message: 'There was an error while trying to show your user information.'
+            });
+        });
+};
 
 const getUserById = (req ,res) => {
     const id = req.params.id 
@@ -126,6 +149,37 @@ const patchUser = (req, res) => {
         })
 }
 
+//* UPDATE my user
+const patchMyUser = ( req, res ) => {
+    const id = req.user.id;
+    const { firstName, lastName, email, password, profileImage, phone } = req.body;
+    const userObj = {
+        firstName,
+        lastName,
+        email,
+        password: hashPassword( password ),
+        profileImage,
+        phone
+    };
+    usersControllers.updateUser( id, userObj )
+        .then( data => {
+            responses.success({
+                res,
+                status: 200,
+                data,
+                message: 'Personal information updated successfully.'
+            });
+        })
+        .catch( error => {
+            responses.error({
+                res,
+                status: 400,
+                data: error,
+                message: 'There was an error while trying to update your personal information.'
+            });
+        });
+};
+
 const deleteUser = (req, res) => {
     const id = req.params.id 
 
@@ -157,10 +211,35 @@ const deleteUser = (req, res) => {
         })
 }
 
+//* DELETE my user
+const deleteMyUser = ( req, res ) => {
+    const id = req.user.id;
+    usersControllers.deleteUser( id )
+        .then( data => {
+            responses.success({
+                res,
+                status: 204,
+                data,
+                message: 'User deleted successfully.'
+            }); 
+        })
+        .catch( error => {
+            responses.error({
+                res,
+                status: 400,
+                data: error,
+                message: 'There was an error while trying to delete your user.'
+            });
+        });
+};
+
 module.exports = {
     getAllUsers,
     getUserById,
+    getMyUser,
     postNewUser,
     patchUser,
-    deleteUser
+    patchMyUser,
+    deleteUser,
+    deleteMyUser
 }
